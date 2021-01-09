@@ -21,6 +21,7 @@
             </Grid.RowDefinitions>
             <CommandBar Grid.Row="0" Grid.Column="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Icon="Add" Name="XlfAppBar" Label="Add XLF File" Click="XlfAppBar_Click"/>
+                <AppBarButton Icon="Clear" Name="ClearXlf" Label="Clear list" Click="ClearList_OnClick"></AppBarButton>
             </CommandBar>
             <ListView Name="XlfList"
                       HorizontalAlignment="Center"
@@ -34,6 +35,7 @@
             </ListView>
             <CommandBar Grid.Column="1" Grid.Row="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Icon="Add" Name="ExcelAppBar" Label="Add Excel File" Click="ExcelAppBar_Click"/>
+                <AppBarButton Icon="Clear" Name="ClearExcel" Label="Clear list" Click="ClearList_OnClick"></AppBarButton>
             </CommandBar>
             <ListView Name="ExcelList"
                       HorizontalAlignment="Center"
@@ -46,6 +48,7 @@
 
             </ListView>
             <Button Name="ConvertBtn" Content="Translate" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Click="ConvertBtn_Click"></Button>
+            <Button Name="CompareBtn" Content="Compare" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Margin="0,100,0,0" Click="CompareBtn_OnClick"></Button>
             <ListView Name="ResultList"
                       HorizontalAlignment="Center"
                               SelectionMode="Single"

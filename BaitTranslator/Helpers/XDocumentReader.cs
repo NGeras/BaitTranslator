@@ -1,6 +1,7 @@
 ﻿using BaitTranslator.Core.Models;
 using OfficeOpenXml;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -10,11 +11,11 @@ namespace BaitTranslator.Helpers
 {
     public static class XDocumentReader
     {
-        public static List<Node> ReadXlfAsync(Stream stream)
+        public static ObservableCollection<Node> ReadXlfAsync(Stream stream)
         {
             XDocument doc = XDocument.Load(stream);
             XNamespace df = doc.Root.Name.Namespace;
-            var nodeList = new List<Node>();
+            var nodeList = new ObservableCollection<Node>();
             foreach (XElement transUnitNode in doc.Descendants(df + "trans-unit"))
             {
                 XElement sourceNode = transUnitNode.Element(df + "source");
@@ -24,7 +25,7 @@ namespace BaitTranslator.Helpers
 
             return nodeList;
         }
-        public static void WriteXlf(List<Node> list, Stream stream)
+        public static void WriteXlf(ObservableCollection<Node> list, Stream stream)
         {
             XDocument doc = XDocument.Load(stream);
             XNamespace df = doc.Root.Name.Namespace;
@@ -42,9 +43,9 @@ namespace BaitTranslator.Helpers
             doc.Save(stream);
             stream.Flush();
         }
-        public static List<Node> ReadXlsx(Stream stream)
+        public static ObservableCollection<Node> ReadXlsx(Stream stream)
         {
-            var list = new List<Node>();
+            var list = new ObservableCollection<Node>();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (ExcelPackage xlPackage = new ExcelPackage(stream))

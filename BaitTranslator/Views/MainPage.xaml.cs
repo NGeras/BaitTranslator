@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using BaitTranslator.Core.Models;
@@ -14,8 +15,9 @@ namespace BaitTranslator.Views
 {
     public sealed partial class MainPage : Page
     {
-        List<Node> _nodeList = new List<Node>();
-        List<Node> _xlList = new List<Node>();
+        private ObservableCollection<Node> _nodeList = new ObservableCollection<Node>();
+        private ObservableCollection<Node> _xlList = new ObservableCollection<Node>();
+        private ObservableCollection<Node> _result = new ObservableCollection<Node>();
         StorageFile _xlfFile;
         private MainViewModel ViewModel
         {
@@ -29,9 +31,10 @@ namespace BaitTranslator.Views
 
         private async void XlfAppBar_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail, SuggestedStartLocation = PickerLocationId.Downloads
+            };
             picker.FileTypeFilter.Add(".xlf");
             _xlfFile = await picker.PickSingleFileAsync();
 
@@ -50,9 +53,10 @@ namespace BaitTranslator.Views
 
         private async void ExcelAppBar_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail, SuggestedStartLocation = PickerLocationId.Downloads
+            };
             picker.FileTypeFilter.Add(".xlsx");
             picker.FileTypeFilter.Add(".xlsm");
             picker.FileTypeFilter.Add(".xls");
@@ -73,7 +77,21 @@ namespace BaitTranslator.Views
 
         private async void ConvertBtn_Click(object sender, RoutedEventArgs e)
         {
-            var result = new List<Node>();
+            if(_xlfFile != null)
+            {
+                using (var stream = await _xlfFile.OpenStreamForWriteAsync())
+                {
+                    XDocumentReader.WriteXlf(_result, stream);
+                }
+            }
+        }
+
+        private void CompareBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_xlList.Count < 1 || _nodeList.Count < 1)
+            {
+                _result.Clear();
+            }
             foreach (var node in _xlList)
             {
                 node.sourceNode.TrimEnd(':');
@@ -89,17 +107,23 @@ namespace BaitTranslator.Views
                     {
                         var nodeToadd = _xlList.First(c => c.sourceNode.ToLower().Equals(node.sourceNode.TrimEnd(':').ToLower()));
                         node.targetNode = nodeToadd.targetNode;
-                        result.Add(node);
+                        _result.Add(node);
                     }
                 }
             }
-            ResultList.ItemsSource = result;
-            if(_xlfFile != null)
+            ResultList.ItemsSource = _result;
+        }
+
+        private void ClearList_OnClick(object sender, RoutedEventArgs e)
+        {
+            string appBarName = ((AppBarButton)sender).Name;
+            if (appBarName.Equals("ClearXlf"))
             {
-                using (var stream = await _xlfFile.OpenStreamForWriteAsync())
-                {
-                    XDocumentReader.WriteXlf(result, stream);
-                }
+                _nodeList.Clear();
+            }
+            else if (appBarName.Equals("ClearExcel"))
+            {
+                _xlList.Clear();
             }
         }
     }
