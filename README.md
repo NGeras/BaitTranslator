@@ -9,6 +9,6 @@ Select a XLSX file from FilePciker and list of all translations will be shown.
 - [x] Open and parse XLSX
 - [x] Basic UI
 - [ ] Compare translations
-- [ ] Merge translations
+- [x] Merge translations
 - [ ] Trigger translation status
 - [ ] Better UI
