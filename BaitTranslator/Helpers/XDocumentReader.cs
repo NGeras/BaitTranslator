@@ -24,6 +24,24 @@ namespace BaitTranslator.Helpers
 
             return nodeList;
         }
+        public static void WriteXlf(List<Node> list, Stream stream)
+        {
+            XDocument doc = XDocument.Load(stream);
+            XNamespace df = doc.Root.Name.Namespace;
+            foreach (XElement transUnitNode in doc.Descendants(df + "trans-unit"))
+            {
+                XElement targetNode = transUnitNode.Element(df + "target");
+                foreach (var item in list)
+                {
+                    if (targetNode.Value.Equals(item.sourceNode))
+                    {
+                        targetNode.SetValue(item.targetNode);
+                    }
+                }
+            }
+            doc.Save(stream);
+            stream.Flush();
+        }
         public static List<Node> ReadXlsx(Stream stream)
         {
             var list = new List<Node>();

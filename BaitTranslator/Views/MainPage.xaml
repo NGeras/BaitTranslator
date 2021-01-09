@@ -10,8 +10,10 @@
         <Grid
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"></RowDefinition>
@@ -43,10 +45,16 @@
                               IsItemClickEnabled="True" Grid.Column="1" Grid.Row="1">
 
             </ListView>
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.
-            -->
+            <Button Name="ConvertBtn" Content="Translate" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Click="ConvertBtn_Click"></Button>
+            <ListView Name="ResultList"
+                      HorizontalAlignment="Center"
+                              SelectionMode="Single"
+                              ScrollViewer.IsVerticalScrollChainingEnabled="True" 
+                              ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                              ScrollViewer.VerticalScrollMode="Enabled"
+                              Margin="20"
+                              IsItemClickEnabled="True" Grid.Column="3" Grid.Row="1">
+            </ListView>
         </Grid>
     </Grid>
 </Page>
