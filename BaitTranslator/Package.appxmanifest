@@ -11,7 +11,7 @@
   <Identity
     Name="7C9ED4C1-959A-41F1-9954-C5059498FFB6"
     Publisher="CN=NGeras"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="7C9ED4C1-959A-41F1-9954-C5059498FFB6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

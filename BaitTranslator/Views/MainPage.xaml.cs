@@ -79,6 +79,7 @@ namespace BaitTranslator.Views
 
         private async void ConvertBtn_Click(object sender, RoutedEventArgs e)
         {
+            GetComparison();
             _folder = await FileHelper.TryGetFolder(UserDataPaths.GetDefault().Desktop);
             var newfile = await _folder.CreateFileAsync(_xlfFile.Name,
                 CreationCollisionOption.GenerateUniqueName);
@@ -94,10 +95,18 @@ namespace BaitTranslator.Views
 
         private void CompareBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            GetComparison();
+            ResultList.ItemsSource = _result;
+        }
+
+        private void GetComparison()
+        {
+            _result.Clear();
             if (_xlList.Count < 1 || _nodeList.Count < 1)
             {
                 _result.Clear();
             }
+
             foreach (var node in _xlList)
             {
                 node.sourceNode.TrimEnd(':');
@@ -111,13 +120,13 @@ namespace BaitTranslator.Views
                 {
                     if (list.Contains(node.sourceNode.TrimEnd(':')))
                     {
-                        var nodeToadd = _xlList.First(c => c.sourceNode.ToLower().Equals(node.sourceNode.TrimEnd(':').ToLower()));
+                        var nodeToadd =
+                            _xlList.First(c => c.sourceNode.ToLower().Equals(node.sourceNode.TrimEnd(':').ToLower()));
                         node.targetNode = nodeToadd.targetNode;
                         _result.Add(node);
                     }
                 }
             }
-            ResultList.ItemsSource = _result;
         }
 
         private void ClearList_OnClick(object sender, RoutedEventArgs e)
