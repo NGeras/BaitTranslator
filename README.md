@@ -1,4 +1,6 @@
 # BaitTranslator
+![](BaitTranslator/Assets/SmallTile.scale-100.png)
+
 UWP Application to merge translations into XLF file
 # How to use
 Select a XLF file from FilePicker and list of all strings will be shown.
