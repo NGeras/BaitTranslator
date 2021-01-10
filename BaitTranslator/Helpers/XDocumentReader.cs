@@ -1,9 +1,12 @@
-﻿using BaitTranslator.Core.Models;
+﻿using System;
+using BaitTranslator.Core.Models;
 using OfficeOpenXml;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 
@@ -25,7 +28,7 @@ namespace BaitTranslator.Helpers
 
             return nodeList;
         }
-        public static void WriteXlf(ObservableCollection<Node> list, Stream stream)
+        public static string WriteXlf(ObservableCollection<Node> list, Stream stream)
         {
             XDocument doc = XDocument.Load(stream);
             XNamespace df = doc.Root.Name.Namespace;
@@ -34,14 +37,17 @@ namespace BaitTranslator.Helpers
                 XElement targetNode = transUnitNode.Element(df + "target");
                 foreach (var item in list)
                 {
+                    var state = targetNode.Attribute("state");
                     if (targetNode.Value.Equals(item.sourceNode))
                     {
+                        state.SetValue("translated");
                         targetNode.SetValue(item.targetNode);
                     }
                 }
             }
-            doc.Save(stream);
+            var fullXml = $"{doc.Declaration}\n{doc}";
             stream.Flush();
+            return fullXml; 
         }
         public static ObservableCollection<Node> ReadXlsx(Stream stream)
         {

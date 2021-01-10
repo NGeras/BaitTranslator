@@ -10,5 +10,5 @@ Select a XLSX file from FilePciker and list of all translations will be shown.
 - [x] Basic UI
 - [x] Compare translations
 - [x] Merge translations
-- [ ] Trigger translation status
+- [x] Trigger translation status
 - [ ] Better UI

@@ -18,7 +18,8 @@ namespace BaitTranslator.Views
         private ObservableCollection<Node> _nodeList = new ObservableCollection<Node>();
         private ObservableCollection<Node> _xlList = new ObservableCollection<Node>();
         private ObservableCollection<Node> _result = new ObservableCollection<Node>();
-        StorageFile _xlfFile;
+        private StorageFile _xlfFile;
+        private StorageFolder _folder;
         private MainViewModel ViewModel
         {
             get { return ViewModelLocator.Current.MainViewModel; }
@@ -37,9 +38,9 @@ namespace BaitTranslator.Views
             };
             picker.FileTypeFilter.Add(".xlf");
             _xlfFile = await picker.PickSingleFileAsync();
-
             if (_xlfFile != null)
             {
+                _result.Clear();
                 using (var stream = await _xlfFile.OpenStreamForReadAsync())
                 {
                     _nodeList = XDocumentReader.ReadXlfAsync(stream);
@@ -64,6 +65,7 @@ namespace BaitTranslator.Views
 
             if (file != null)
             {
+                _result.Clear();
                 using (var stream = await file.OpenStreamForReadAsync())
                 {
                     _xlList = XDocumentReader.ReadXlsx(stream);
@@ -77,11 +79,15 @@ namespace BaitTranslator.Views
 
         private async void ConvertBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(_xlfFile != null)
+            _folder = await FileHelper.TryGetFolder(UserDataPaths.GetDefault().Desktop);
+            var newfile = await _folder.CreateFileAsync(_xlfFile.Name,
+                CreationCollisionOption.GenerateUniqueName);
+            if (_xlfFile != null)
             {
                 using (var stream = await _xlfFile.OpenStreamForWriteAsync())
                 {
-                    XDocumentReader.WriteXlf(_result, stream);
+                    var xlfDoc = XDocumentReader.WriteXlf(_result, stream);
+                    await FileIO.WriteTextAsync(newfile, xlfDoc);
                 }
             }
         }
