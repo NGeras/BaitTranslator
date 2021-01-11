@@ -107,23 +107,16 @@ namespace BaitTranslator.Views
                 _result.Clear();
             }
 
-            foreach (var node in _xlList)
-            {
-                node.sourceNode.TrimEnd(':');
-            }
-
             var list = _xlList.Select(c => c.sourceNode);
-
             foreach (var node in _nodeList)
             {
                 if (node.sourceNode.Equals(node.targetNode))
                 {
-                    if (list.Contains(node.sourceNode.TrimEnd(':')))
+                    if (list.Contains(node.sourceNode))
                     {
                         var nodeToadd =
-                            _xlList.First(c => c.sourceNode.ToLower().Equals(node.sourceNode.TrimEnd(':').ToLower()));
-                        node.targetNode = nodeToadd.targetNode;
-                        _result.Add(node);
+                            _xlList.First(c => c.sourceNode.Equals(node.sourceNode));
+                        _result.Add(new Node(node.sourceNode, nodeToadd.targetNode));
                     }
                 }
             }
