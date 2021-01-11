@@ -20,7 +20,10 @@ namespace BaitTranslator.ViewModels
             SimpleIoc.Default.Register<ShellViewModel>();
             Register<MainViewModel, MainPage>();
             Register<SettingsViewModel, SettingsPage>();
+            Register<BlankViewModel, BlankPage>();
         }
+
+        public BlankViewModel BlankViewModel => SimpleIoc.Default.GetInstance<BlankViewModel>();
 
         public SettingsViewModel SettingsViewModel => SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
