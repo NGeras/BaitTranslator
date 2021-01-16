@@ -20,6 +20,7 @@ namespace BaitTranslator.Views
         private ObservableCollection<Node> _result = new ObservableCollection<Node>();
         private StorageFile _xlfFile;
         private StorageFolder _folder;
+
         private MainViewModel ViewModel
         {
             get { return ViewModelLocator.Current.MainViewModel; }
@@ -47,6 +48,7 @@ namespace BaitTranslator.Views
                     if (_nodeList.Count > 0)
                     {
                         XlfList.ItemsSource = _nodeList;
+                        CommandAppBar.Content = XlfList.Items.Count.ToString();
                     }
                 }
             }
@@ -69,9 +71,10 @@ namespace BaitTranslator.Views
                 using (var stream = await file.OpenStreamForReadAsync())
                 {
                     _xlList = XDocumentReader.ReadXlsx(stream);
-                    if(_xlList.Count > 0)
+                    if (_xlList.Count > 0)
                     {
                         ExcelList.ItemsSource = _xlList;
+                        CommandAppBar2.Content = ExcelList.Items.Count.ToString();
                     }
                 }
             }
@@ -79,7 +82,7 @@ namespace BaitTranslator.Views
 
         private async void ConvertBtn_Click(object sender, RoutedEventArgs e)
         {
-            GetComparison();
+            GetComparison(false);
             _folder = await FileHelper.TryGetFolder(UserDataPaths.GetDefault().Desktop);
             var newfile = await _folder.CreateFileAsync(_xlfFile.Name,
                 CreationCollisionOption.GenerateUniqueName);
@@ -95,11 +98,11 @@ namespace BaitTranslator.Views
 
         private void CompareBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            GetComparison();
+            GetComparison(true);
             ResultList.ItemsSource = _result;
         }
 
-        private void GetComparison()
+        private void GetComparison(bool isCompare)
         {
             _result.Clear();
             if (_xlList.Count < 1 || _nodeList.Count < 1)
@@ -116,7 +119,15 @@ namespace BaitTranslator.Views
                     {
                         var nodeToadd =
                             _xlList.First(c => c.sourceNode.Equals(node.sourceNode));
-                        _result.Add(new Node(node.sourceNode, nodeToadd.targetNode));
+                        if (isCompare)
+                        {
+                            _result.Add(new Node(node.sourceNode, nodeToadd.targetNode));
+                        }
+                        else
+                        {
+                            node.targetNode = nodeToadd.targetNode;
+                            _result.Add(node);
+                        }
                     }
                 }
             }
@@ -124,7 +135,7 @@ namespace BaitTranslator.Views
 
         private void ClearList_OnClick(object sender, RoutedEventArgs e)
         {
-            string appBarName = ((AppBarButton)sender).Name;
+            string appBarName = ((AppBarButton) sender).Name;
             if (appBarName.Equals("ClearXlf"))
             {
                 _nodeList.Clear();
@@ -133,6 +144,43 @@ namespace BaitTranslator.Views
             {
                 _xlList.Clear();
             }
+        }
+
+        private void SortList_OnClick(object sender, RoutedEventArgs e)
+        {
+            var toggle = sender as AppBarToggleButton;
+            var notDoneList = new ObservableCollection<Node>();
+            var doneList = new ObservableCollection<Node>();
+            if (toggle.IsChecked == null)
+            {
+                foreach (var node in _nodeList)
+                {
+                    if (!node.sourceNode.Equals(node.targetNode))
+                    {
+                        doneList.Add(node);
+                    }
+                }
+                XlfList.ItemsSource = doneList;
+                SortXlf.Label = "Done";
+            }
+            else if ((bool) toggle.IsChecked)
+            {
+                foreach (var node in _nodeList)
+                {
+                    if (node.sourceNode.Equals(node.targetNode))
+                    {
+                        notDoneList.Add(node);
+                    }
+                }
+                SortXlf.Label = "Not done";
+                XlfList.ItemsSource = notDoneList;
+            }
+            else if ((bool) !toggle.IsChecked)
+            {
+                XlfList.ItemsSource = _nodeList;
+                SortXlf.Label = "All";
+            }
+            CommandAppBar.Content = XlfList.Items.Count.ToString();
         }
     }
 }

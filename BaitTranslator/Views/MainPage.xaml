@@ -10,17 +10,18 @@
         <Grid
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="20*"></RowDefinition>
             </Grid.RowDefinitions>
-            <CommandBar Grid.Row="0" Grid.Column="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+            <CommandBar Name="CommandAppBar" Grid.Row="0" Grid.Column="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Icon="Add" Name="XlfAppBar" Label="Add XLF File" Click="XlfAppBar_Click"/>
+                <AppBarToggleButton Icon="Filter" Name="SortXlf" Label="All" Click="SortList_OnClick" IsThreeState="True"></AppBarToggleButton>
                 <AppBarButton Icon="Clear" Name="ClearXlf" Label="Clear list" Click="ClearList_OnClick"></AppBarButton>
             </CommandBar>
             <ListView Name="XlfList"
@@ -33,7 +34,7 @@
                               IsItemClickEnabled="True" Grid.Column="0" Grid.Row="1">
                 
             </ListView>
-            <CommandBar Grid.Column="1" Grid.Row="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+            <CommandBar Name="CommandAppBar2" Grid.Column="1" Grid.Row="0" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Icon="Add" Name="ExcelAppBar" Label="Add Excel File" Click="ExcelAppBar_Click"/>
                 <AppBarButton Icon="Clear" Name="ClearExcel" Label="Clear list" Click="ClearList_OnClick"></AppBarButton>
             </CommandBar>
