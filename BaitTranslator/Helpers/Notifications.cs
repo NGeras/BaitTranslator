@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace BaitTranslator.Helpers
 {
@@ -50,6 +51,18 @@ namespace BaitTranslator.Helpers
                 // await okDialog.ShowAsync();
             }
 
+        }
+        public static ContentDialog CreateOKDialog(string title, string content)
+        {
+            var c = new ContentDialog
+            {
+                Title = title,
+                Content = content,
+                PrimaryButtonText = "OK",
+                IsPrimaryButtonEnabled = true,
+                DefaultButton = ContentDialogButton.Primary
+            };
+            return c;
         }
     }
 }

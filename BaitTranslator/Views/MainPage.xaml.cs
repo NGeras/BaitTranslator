@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using BaitTranslator.Core.Models;
 using BaitTranslator.Helpers;
 using BaitTranslator.ViewModels;
@@ -38,7 +39,13 @@ namespace BaitTranslator.Views
                 ViewMode = PickerViewMode.Thumbnail, SuggestedStartLocation = PickerLocationId.Downloads
             };
             picker.FileTypeFilter.Add(".xlf");
-            _xlfFile = await picker.PickSingleFileAsync();
+            var file = await picker.PickSingleFileAsync();
+            await GetXlfFile(file);
+        }
+
+        private async Task GetXlfFile(StorageFile file)
+        {
+            _xlfFile = file;
             if (_xlfFile != null)
             {
                 _result.Clear();
@@ -65,6 +72,11 @@ namespace BaitTranslator.Views
             picker.FileTypeFilter.Add(".xls");
             StorageFile file = await picker.PickSingleFileAsync();
 
+            await GetExcelFile(file);
+        }
+
+        private async Task GetExcelFile(StorageFile file)
+        {
             if (file != null)
             {
                 _result.Clear();
@@ -139,10 +151,12 @@ namespace BaitTranslator.Views
             if (appBarName.Equals("ClearXlf"))
             {
                 _nodeList.Clear();
+                CommandAppBar.Content = 0;
             }
             else if (appBarName.Equals("ClearExcel"))
             {
                 _xlList.Clear();
+                CommandAppBar2.Content = 0;
             }
         }
 
@@ -160,6 +174,7 @@ namespace BaitTranslator.Views
                         doneList.Add(node);
                     }
                 }
+
                 XlfList.ItemsSource = doneList;
                 SortXlf.Label = "Done";
             }
@@ -172,6 +187,7 @@ namespace BaitTranslator.Views
                         notDoneList.Add(node);
                     }
                 }
+
                 SortXlf.Label = "Not done";
                 XlfList.ItemsSource = notDoneList;
             }
@@ -180,7 +196,44 @@ namespace BaitTranslator.Views
                 XlfList.ItemsSource = _nodeList;
                 SortXlf.Label = "All";
             }
+
             CommandAppBar.Content = XlfList.Items.Count.ToString();
+        }
+
+        private void Grid_OnDragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void Grid_OnDrop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var storageItems = await e.DataView.GetStorageItemsAsync();
+                if (storageItems.Count > 2)
+                {
+                    var tooManyDialog = Notifications.CreateOKDialog("Max 2 files supported", $"You have dropped {storageItems.Count} item(s)!");
+                    await tooManyDialog.ShowAsync();
+                    return;
+                }
+                foreach (StorageFile storageItem in storageItems)
+                {
+                    var file = await FileHelper.TryGetFile(storageItem.Path);
+                    if (file.FileType.Equals(".xlf"))
+                    {
+                        await GetXlfFile(file);
+                    }
+                    else if (file.FileType.Equals(".xlsx")|| file.FileType.Equals(".xls") || file.FileType.Equals(".xlsm"))
+                    {
+                        await GetExcelFile(file);
+                    }
+                    else
+                    {
+                        var dialog = Notifications.CreateOKDialog("File not supported", $"This file type '{file.FileType}' is not supported!");
+                        await dialog.ShowAsync();
+                    }
+                }
+            }
         }
     }
 }

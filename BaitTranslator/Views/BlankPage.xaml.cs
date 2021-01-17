@@ -11,7 +11,6 @@ using BaitTranslator.ViewModels;
 
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using BaitTranslator.Helpers;
 
 namespace BaitTranslator.Views
 {
